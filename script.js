@@ -1,19 +1,24 @@
 let toDoList = {};
 let id = 0;
+let isNotEditingItem = true;
 const inputBox = document.getElementById("inputBox");
 const inputBoxBtn = document.getElementById("inputBoxBtn");
 const list = document.getElementById("list");
 
 const getValue = () => {
-    newToDoItem();
-    inputBox.value = "";
+    if(inputBox.value != ""){
+        newToDoItem();
+        inputBox.value = "";
+    } else {
+        alert("Por favor, inserte una tarea");
+    }
 }
 
 // Usar Enter para introducir datos
 // https://www.w3schools.com/howto/howto_js_trigger_button_enter.asp
 
-inputBox.addEventListener("keypress", (event) => {
-    if (event.key === "Enter") {
+inputBox.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && isNotEditingItem) {
         // Evita el comportamiento por defecto de Enter
         event.preventDefault();
         // Llama al botón que se desea pulsar
@@ -34,6 +39,9 @@ const insertNewToDoItem = (id) => {
     let li = document.createElement("li");
     li.setAttribute("id", id);
     li.classList.add("toDoItem");
+    setTimeout(()=>{
+        li.classList.add("animated");
+    }, 100)
 
     // Crea un checkbox con clase "checkbox"
     let checkbox = document.createElement("input");
@@ -61,8 +69,75 @@ const insertNewToDoItem = (id) => {
     editBtn.classList.add("editBtn");
     editBtn.innerText = "Editar";
     editBtn.addEventListener("click", () => {
-        toDoList[id]["task"] = prompt("Modifica la tarea", toDoList[id]["task"]);
-        task.innerText = toDoList[id]["task"];
+        // Método 01
+        // toDoList[id]["task"] = prompt("Modifica la tarea", toDoList[id]["task"]);
+        // task.innerText = toDoList[id]["task"];
+
+        //Método 02
+        // Enter ahora no introduce valor, sino que acepta la edición
+        isNotEditingItem = false;
+
+        // Se crea el campo de texto
+        let editableTask = document.createElement("input");
+        editableTask.setAttribute("type", "text");
+        editableTask.setAttribute("placeholder", toDoList[id]["task"]);
+        editableTask.classList.add("editable-task");
+
+        // Se crea el botón Aceptar
+        let editBtnOK = document.createElement("button");
+        editBtnOK.classList.add("editBtnOK");
+        editBtnOK.innerText = "Aceptar";
+        editBtnOK.addEventListener("click", () => {
+            if (editableTask.value === "") {
+                toDoList[id]["task"] = toDoList[id]["task"];
+            } else {
+                toDoList[id]["task"] = editableTask.value;
+            }
+            task.innerText = toDoList[id]["task"];
+            editableTask.parentNode.replaceChild(task, editableTask);
+            editBtnOK.parentNode.replaceChild(editBtn, editBtnOK);
+            editBtnCancel.parentNode.replaceChild(deleteBtn, editBtnCancel);
+            isNotEditingItem = true;
+        });
+
+        // Enter acepta la edición
+        editableTask.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                // Evita el comportamiento por defecto de Enter
+                event.preventDefault();
+                // Llama al botón que se desea pulsar
+                editBtnOK.click();
+            }
+        });
+
+        // Se crea el botón Cancelar
+        let editBtnCancel = document.createElement("button");
+        editBtnCancel.classList.add("editBtnCancel");
+        editBtnCancel.innerText = "Cancelar";
+        editBtnCancel.addEventListener("click", () => {
+            editableTask.parentNode.replaceChild(task, editableTask);
+            editBtnOK.parentNode.replaceChild(editBtn, editBtnOK);
+            editBtnCancel.parentNode.replaceChild(deleteBtn, editBtnCancel);
+            isNotEditingItem = true;
+        });
+
+        // Escape cancela la edición
+        editableTask.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                // Evita el comportamiento por defecto de Enter
+                event.preventDefault();
+                // Llama al botón que se desea pulsar
+                editBtnCancel.click();
+            }
+        });
+
+        // Se reemplazan los elementos
+        task.parentNode.replaceChild(editableTask, task);
+        editBtn.parentNode.replaceChild(editBtnOK, editBtn);
+        deleteBtn.parentNode.replaceChild(editBtnCancel, deleteBtn);
+
+        // Focus el campo
+        editableTask.focus();
     })
 
     // Crea un botón con clase "deleteItemBtn"
@@ -71,10 +146,13 @@ const insertNewToDoItem = (id) => {
     deleteBtn.innerText = "Borrar";
 
     // DUDA -> ¿Hay alguna manera de introducir un atributo onclick?
-    deleteBtn.addEventListener("click", () =>{
+    deleteBtn.addEventListener("click", () => {
         if (confirm("¿Seguro que deseas borrarlo?")) {
             // Método para eliminar un elemento
-            li.parentNode.removeChild(li);
+            li.classList.add("deleted")
+            setTimeout(()=>{
+                li.parentNode.removeChild(li);
+            }, 1000)
             // Se elimina del objeto la entrada
             delete toDoList[id];
         }
@@ -85,17 +163,4 @@ const insertNewToDoItem = (id) => {
 
     // Inserta el li dentro del ul
     list.appendChild(li);
-
-}
-
-// Función para marcar/desmarcar una tarea (utilizando ChatGPT)
-function tacharTarea() {
-    // Verificar si el checkbox está marcado
-    if (this.checked) {
-        // Si está marcado, tachar el texto de la tarea
-        this.parentNode.style.textDecoration = 'line-through';
-    } else {
-        // Si no está marcado, quitar el tachado del texto de la tarea
-        this.parentNode.style.textDecoration = 'none';
-    }
 }

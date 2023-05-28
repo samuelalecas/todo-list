@@ -8,3 +8,8 @@ Pasos a seguir:
 5. Este código ha de tener un botón de editar, y un botón de borrar.
 6. Este código ha de tener un id único, que permita manejar los borrados y ediciones.
 7. Si pulsas el checkbox, el texto se tacha y "complete" pasa a ser verdad.
+8. Para que al pulsar Editar se reemplace el campo de texto:
+    - Crear un input de texto
+    - Ponerle de valor dentro el task actual
+    - Seleccionar el nodo y reemplazarlo
+    - Al acabar la edición, seleccionar el nodo y volverlo a hacer texto normal

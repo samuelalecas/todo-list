@@ -6,14 +6,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
     <title>ToDo-List</title>
 </head>
 
-<body>
-    <input type="text" name="" id="inputBox">
-    <button id="inputBoxBtn"onclick="getValue()">Enviar</button>
-    <ul id="list" class="list">
-    </ul>
+<body class="body">
+    <h1>To Do List</h1>
+    <main class="container">
+        <input type="text" class="inputBox" id="inputBox" placeholder="Escribe una tarea...">
+        <button class="inputBoxBtn" id="inputBoxBtn" onclick="getValue()">Enviar</button>
+        <ul id="list" class="list">
+            <!-- El contenido se generará aquí -->
+        </ul>
+    </main>
     <script src="script.js"></script>
 </body>
 
