@@ -38,7 +38,7 @@ const newToDoItem = (taskName) => {
 }
 
 const insertNewToDoItem = (array) => {
-    let id = array.length-1;
+    let id = array.length - 1;
     // Crea un li que tenga de id el número del objeto
     let li = document.createElement("li");
     li.setAttribute("id", id);
@@ -148,13 +148,15 @@ const insertNewToDoItem = (array) => {
 
     deleteBtn.addEventListener("click", () => {
         if (confirm("¿Seguro que deseas borrarlo?")) {
-            // Método para eliminar un elemento
+            let currentId = li.id;
+            toDoList.splice(currentId, 1);
             li.classList.add("animationOut")
             setTimeout(() => {
                 li.parentNode.removeChild(li);
+                // Se resetean las id de los li
+                resetIds();
             }, 1000)
-            // Se elimina del objeto la entrada
-            delete toDoList[id];
+
         }
     })
 
@@ -164,7 +166,7 @@ const insertNewToDoItem = (array) => {
     upBtn.innerText = "▲";
     upBtn.addEventListener("click", () => {
         let index = +upBtn.parentNode.parentNode.id;
-        moveItemList(index, DIRECTIONS.UP,toDoList);
+        moveItemList(index, DIRECTIONS.UP, toDoList);
     });
 
     // Se crea un botón de bajada
@@ -173,7 +175,7 @@ const insertNewToDoItem = (array) => {
     downBtn.innerText = "▼";
     downBtn.addEventListener("click", () => {
         let index = +downBtn.parentNode.parentNode.id;
-        moveItemList(index, DIRECTIONS.DOWN,toDoList);
+        moveItemList(index, DIRECTIONS.DOWN, toDoList);
     });
 
     // Se meten en un mismo div
@@ -193,9 +195,9 @@ const DIRECTIONS = {
     DOWN: Symbol(),
 }
 
-function moveItemList(index, direction, array){
+function moveItemList(index, direction, array) {
 
-    if (direction === DIRECTIONS.UP){
+    if (direction === DIRECTIONS.UP) {
         if (index === 0) {
             return;
         }
@@ -203,8 +205,8 @@ function moveItemList(index, direction, array){
         moveUpDOM(index);
     }
 
-    if (direction === DIRECTIONS.DOWN){
-        if(index === array.length - 1){
+    if (direction === DIRECTIONS.DOWN) {
+        if (index === array.length - 1) {
             return;
         }
         swapElementsArray(array, index, index + 1);
@@ -220,7 +222,7 @@ function swapElementsArray(array, index1, index2) {
 }
 
 // Desplaza los elementos del DOM hacia arriba y reemplaza los ID
-function moveUpDOM(id){
+function moveUpDOM(id) {
     let prevId = (id - 1).toString();
 
     let goUpItem = document.getElementById(id);
@@ -233,7 +235,7 @@ function moveUpDOM(id){
 }
 
 // Desplaza los elementos del DOM hacia abajo y reemplaza los ID
-function moveDownDOM(id){
+function moveDownDOM(id) {
     let nextId = (id + 1).toString();
 
     let goDownItem = document.getElementById(id);
@@ -243,6 +245,15 @@ function moveDownDOM(id){
     goUpItem.setAttribute("id", id);
 
     goDownItem.before(goUpItem);
+}
+
+// Resetear las id de todos los items de la lista
+function resetIds() {
+    let items = list.querySelectorAll("li");
+
+    for (let i = 0; i < items.length; i++) {
+        items[i].setAttribute("id", i);
+    }
 }
 
 // function swapIndexToAfter(index, array){
