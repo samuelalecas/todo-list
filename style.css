@@ -145,11 +145,11 @@ table {
     align-items: center;
 }
 
-h1{
+h1 {
     font-family: 'Montserrat', sans-serif;
     font-size: 1.5rem;
     margin-bottom: 1rem;
-    color:  rgb(63, 63, 63);
+    color: rgb(63, 63, 63);
 }
 
 .container {
@@ -157,7 +157,7 @@ h1{
     flex-direction: column;
     justify-content: space-between;
     font-family: 'Montserrat', sans-serif;
-    width: 20rem;
+    width: 30rem;
     padding: 0.5rem;
     border: 3px solid rgb(255, 255, 255);
     border-radius: 0.8rem;
@@ -215,9 +215,10 @@ h1{
 
 /* Para animar la caja al aparecer, desde JavaScript voy añadiéndole estilos */
 
-.toDoItem{
-    display: grid;
-    grid-template-columns: 0.1fr 3fr 1fr 1fr;
+.toDoItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background-color: rgb(255, 255, 255);
     padding: 0;
     margin-top: 0;
@@ -226,10 +227,11 @@ h1{
     opacity: 0;
     transition: all 0.2s ease-in-out;
 }
+
 .toDoItem.animationIn {
     opacity: 1;
     height: 20px;
-    padding: 1rem;
+    padding: 1rem 0.1rem;
     margin-top: 0.5rem;
     border-radius: 0.5rem;
     transition: all 0.4s ease-in-out;
@@ -241,4 +243,54 @@ h1{
     padding: 0;
     margin-top: 0;
     border-radius: 0;
+}
+
+/* Buttons */
+.checkbox {
+    flex-grow: 0.5;
+}
+
+.task {
+    flex-grow: 5;
+}
+
+.editable-task {
+    flex-grow: 5;
+}
+
+.editBtn {
+    flex-grow: 0.5;
+}
+
+.editBtnOK {
+    flex-grow: 0.5;
+}
+
+.editBtnCancel {
+    flex-grow: 0.5;
+}
+
+.deleteBtn {
+    flex-grow: 0.5;
+}
+
+.upBtn,
+.downBtn {
+    background: none;
+    border: none;
+    margin: 0;
+    width: 0.5rem;
+    color: rgb(176, 176, 176);
+}
+
+.upBtn:hover,
+.downBtn:hover {
+    color:rgb(91, 91, 91);
+    cursor: pointer;
+}
+
+.moveBtnsDiv {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 0.4;
 }

@@ -1,4 +1,4 @@
-let toDoList = {};
+let toDoList = [];
 let id = 0;
 let isNotEditingItem = true;
 const inputBox = document.getElementById("inputBox");
@@ -30,10 +30,10 @@ const newToDoItem = (taskName) => {
         alert("Por favor, inserte una tarea");
         return;
     }
-    toDoList[id] = {
+    toDoList.push({
         task: taskName,
         complete: false,
-    };
+    });
     // Se crea un nuevo nodo
     insertNewToDoItem(id);
     id++;
@@ -163,8 +163,23 @@ const insertNewToDoItem = (id) => {
         }
     })
 
+    // Se crea un botón de subida
+    let upBtn = document.createElement('button');
+    upBtn.classList.add("upBtn");
+    upBtn.innerText = "▲";
+
+    // Se crea un botón de bajada
+    let downBtn = document.createElement('button');
+    downBtn.classList.add("downBtn");
+    downBtn.innerText = "▼";
+
+    // Se meten en un mismo div
+    let moveBtnsDiv = document.createElement('div');
+    moveBtnsDiv.classList.add("moveBtnsDiv");
+    moveBtnsDiv.append(upBtn, downBtn);
+
     // Inserta cada elemento en el li
-    li.append(checkbox, task, editBtn, deleteBtn);
+    li.append(checkbox, task, editBtn, deleteBtn, moveBtnsDiv);
 
     // Inserta el li dentro del ul
     list.appendChild(li);
