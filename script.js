@@ -5,13 +5,10 @@ const inputBox = document.getElementById("inputBox");
 const inputBoxBtn = document.getElementById("inputBoxBtn");
 const list = document.getElementById("list");
 
-const getValue = () => {
-    if(inputBox.value != ""){
-        newToDoItem();
-        inputBox.value = "";
-    } else {
-        alert("Por favor, inserte una tarea");
-    }
+// Función asignada al botón
+const handleClickButton = () => {
+    newToDoItem(inputBox.value);
+    inputBox.value = "";
 }
 
 // Usar Enter para introducir datos
@@ -22,14 +19,22 @@ inputBox.addEventListener("keydown", (event) => {
         // Evita el comportamiento por defecto de Enter
         event.preventDefault();
         // Llama al botón que se desea pulsar
-        inputBoxBtn.click();
+        // inputBoxBtn.click();
+        handleClickButton();
     }
 });
 
-const newToDoItem = () => {
-    toDoList[id] = {};
-    toDoList[id]["task"] = inputBox.value;
-    toDoList[id]["complete"] = false;
+const newToDoItem = (taskName) => {
+    // Se crea nueva entrada en el objeto
+    if (taskName === "") {
+        alert("Por favor, inserte una tarea");
+        return;
+    }
+    toDoList[id] = {
+        task: taskName,
+        complete: false,
+    };
+    // Se crea un nuevo nodo
     insertNewToDoItem(id);
     id++;
 }
@@ -39,21 +44,22 @@ const insertNewToDoItem = (id) => {
     let li = document.createElement("li");
     li.setAttribute("id", id);
     li.classList.add("toDoItem");
-    setTimeout(()=>{
-        li.classList.add("animated");
-    }, 100)
+    setTimeout(() => {
+        li.classList.add("animationIn");
+    }, 0)
 
     // Crea un checkbox con clase "checkbox"
     let checkbox = document.createElement("input");
     checkbox.setAttribute("type", "checkbox");
     checkbox.classList.add("checkbox");
-    // Se le puede añadir un addEventListener en cada checkbox al crearlos (utilizando ChatGPT)
+    // Se le puede añadir un addEventListener en cada checkbox al crearlos
     checkbox.addEventListener('change', () => {
         if (checkbox.checked) {
-            checkbox.parentNode.style.textDecoration = 'line-through';
+            // OJO - Hay que asignar clase
+            li.style.textDecoration = 'line-through';
             toDoList[id]["complete"] = true;
         } else {
-            checkbox.parentNode.style.textDecoration = 'none';
+            li.style.textDecoration = 'none';
             toDoList[id]["complete"] = false;
         }
     });
@@ -145,12 +151,11 @@ const insertNewToDoItem = (id) => {
     deleteBtn.classList.add("deleteBtn");
     deleteBtn.innerText = "Borrar";
 
-    // DUDA -> ¿Hay alguna manera de introducir un atributo onclick?
     deleteBtn.addEventListener("click", () => {
         if (confirm("¿Seguro que deseas borrarlo?")) {
             // Método para eliminar un elemento
-            li.classList.add("deleted")
-            setTimeout(()=>{
+            li.classList.add("animationOut")
+            setTimeout(() => {
                 li.parentNode.removeChild(li);
             }, 1000)
             // Se elimina del objeto la entrada

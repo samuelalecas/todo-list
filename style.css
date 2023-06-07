@@ -213,6 +213,8 @@ h1{
     background-color: rgba(255, 255, 255, 0.5);
 }
 
+/* Para animar la caja al aparecer, desde JavaScript voy añadiéndole estilos */
+
 .toDoItem{
     display: grid;
     grid-template-columns: 0.1fr 3fr 1fr 1fr;
@@ -224,7 +226,7 @@ h1{
     opacity: 0;
     transition: all 0.2s ease-in-out;
 }
-.toDoItem.animated {
+.toDoItem.animationIn {
     opacity: 1;
     height: 20px;
     padding: 1rem;
@@ -233,7 +235,7 @@ h1{
     transition: all 0.4s ease-in-out;
 }
 
-.toDoItem.animated.deleted {
+.toDoItem.animationIn.animationOut {
     opacity: 0;
     height: 0;
     padding: 0;
