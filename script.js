@@ -1,5 +1,4 @@
 let toDoList = [];
-let id = 0;
 let isNotEditingItem = true;
 const inputBox = document.getElementById("inputBox");
 const inputBoxBtn = document.getElementById("inputBoxBtn");
@@ -35,11 +34,11 @@ const newToDoItem = (taskName) => {
         complete: false,
     });
     // Se crea un nuevo nodo
-    insertNewToDoItem(id);
-    id++;
+    insertNewToDoItem(toDoList);
 }
 
-const insertNewToDoItem = (id) => {
+const insertNewToDoItem = (array) => {
+    let id = array.length-1;
     // Crea un li que tenga de id el número del objeto
     let li = document.createElement("li");
     li.setAttribute("id", id);
@@ -68,25 +67,21 @@ const insertNewToDoItem = (id) => {
     let task = document.createElement("div");
     task.setAttribute("id", `task-${id}`);
     task.classList.add("task");
-    task.innerText = toDoList[id]["task"];
+    task.innerText = toDoList[id].task;
 
     // Crea un botón con clase "editItemBtn"
     let editBtn = document.createElement("button");
     editBtn.classList.add("editBtn");
     editBtn.innerText = "Editar";
     editBtn.addEventListener("click", () => {
-        // Método 01
-        // toDoList[id]["task"] = prompt("Modifica la tarea", toDoList[id]["task"]);
-        // task.innerText = toDoList[id]["task"];
-
-        //Método 02
+        let currentId = li.id;
         // Enter ahora no introduce valor, sino que acepta la edición
         isNotEditingItem = false;
 
         // Se crea el campo de texto
         let editableTask = document.createElement("input");
         editableTask.setAttribute("type", "text");
-        editableTask.setAttribute("placeholder", toDoList[id]["task"]);
+        editableTask.setAttribute("placeholder", toDoList[currentId]["task"]);
         editableTask.classList.add("editable-task");
 
         // Se crea el botón Aceptar
@@ -95,11 +90,11 @@ const insertNewToDoItem = (id) => {
         editBtnOK.innerText = "Aceptar";
         editBtnOK.addEventListener("click", () => {
             if (editableTask.value === "") {
-                toDoList[id]["task"] = toDoList[id]["task"];
+                toDoList[currentId]["task"] = toDoList[currentId]["task"];
             } else {
-                toDoList[id]["task"] = editableTask.value;
+                toDoList[currentId]["task"] = editableTask.value;
             }
-            task.innerText = toDoList[id]["task"];
+            task.innerText = toDoList[currentId]["task"];
             editableTask.parentNode.replaceChild(task, editableTask);
             editBtnOK.parentNode.replaceChild(editBtn, editBtnOK);
             editBtnCancel.parentNode.replaceChild(deleteBtn, editBtnCancel);
@@ -167,11 +162,19 @@ const insertNewToDoItem = (id) => {
     let upBtn = document.createElement('button');
     upBtn.classList.add("upBtn");
     upBtn.innerText = "▲";
+    upBtn.addEventListener("click", () => {
+        let index = +upBtn.parentNode.parentNode.id;
+        moveItemList(index, DIRECTIONS.UP,toDoList);
+    });
 
     // Se crea un botón de bajada
     let downBtn = document.createElement('button');
     downBtn.classList.add("downBtn");
     downBtn.innerText = "▼";
+    downBtn.addEventListener("click", () => {
+        let index = +downBtn.parentNode.parentNode.id;
+        moveItemList(index, DIRECTIONS.DOWN,toDoList);
+    });
 
     // Se meten en un mismo div
     let moveBtnsDiv = document.createElement('div');
@@ -184,3 +187,68 @@ const insertNewToDoItem = (id) => {
     // Inserta el li dentro del ul
     list.appendChild(li);
 }
+
+const DIRECTIONS = {
+    UP: Symbol(),
+    DOWN: Symbol(),
+}
+
+function moveItemList(index, direction, array){
+
+    if (direction === DIRECTIONS.UP){
+        if (index === 0) {
+            return;
+        }
+        swapElementsArray(array, index - 1, index);
+        moveUpDOM(index);
+    }
+
+    if (direction === DIRECTIONS.DOWN){
+        if(index === array.length - 1){
+            return;
+        }
+        swapElementsArray(array, index, index + 1);
+        moveDownDOM(index);
+    }
+}
+
+// Intercambia de lugar dos elementos de un array
+function swapElementsArray(array, index1, index2) {
+    let temp = array[index1];
+    array[index1] = array[index2];
+    array[index2] = temp;
+}
+
+// Desplaza los elementos del DOM hacia arriba y reemplaza los ID
+function moveUpDOM(id){
+    let prevId = (id - 1).toString();
+
+    let goUpItem = document.getElementById(id);
+    let goDownItem = document.getElementById(prevId);
+
+    goUpItem.setAttribute("id", prevId);
+    goDownItem.setAttribute("id", id);
+
+    goUpItem.after(goDownItem);
+}
+
+// Desplaza los elementos del DOM hacia abajo y reemplaza los ID
+function moveDownDOM(id){
+    let nextId = (id + 1).toString();
+
+    let goDownItem = document.getElementById(id);
+    let goUpItem = document.getElementById(nextId);
+
+    goDownItem.setAttribute("id", nextId);
+    goUpItem.setAttribute("id", id);
+
+    goDownItem.before(goUpItem);
+}
+
+// function swapIndexToAfter(index, array){
+//     if (index > array.length || index < 0) return array;
+//     let newArray = [...array];
+//     newArray.splice(index-1, 0, newArray[index]);
+//     newArray.splice(index+1,1);
+//     return newArray;
+// }
