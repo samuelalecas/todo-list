@@ -19,3 +19,9 @@ Incorporando localStorage:
     - Al añadir un item
     - Al borrar un item
     - Al cambiar el orden de un item
+
+ERRORES:
+- Cuando editas un elemento, no se actualiza el localStorage.
+- Cuando bajas un elemento en la lista, da error.
+- Cuando excede el límite por arriba, da error.
+- Se resetea el id cuando se borra un elemento.

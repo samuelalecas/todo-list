@@ -11,43 +11,28 @@ const list = document.getElementById("list");
 
 // -----------------------------------------
 
-// Almacenar la información en localStorage
-function saveItemToLocalStorage(id, item) {
-    localStorage.setItem(id, JSON.stringify(item));
+// Actualiza el array del localStorage
+function updateLocalStorage(array) {
+    localStorage.setItem("list", JSON.stringify(array));
 }
 
-// Crear una función que elimine elementos en localStorage
-function deleteItemFromLocalStorage(id){
-    delete localStorage[id];
-}
-
-// Crear una función que lea el localStorage y pinte la pantalla
-function updateArray(array) {
-    array.length = 0;
-    let keys = Object.keys(localStorage);
-    for (let key of keys) {
-        let item = JSON.parse(localStorage[key]);
-        array.push(item);
-    }
-}
-
-// Función que actualiza la pantalla
-function updateScreen(array){
+// Actualiza el listado en pantalla
+function updateScreen(array) {
     list.innerHTML = "";
-    for(item of array){
-
+    for (index in array) {
+        insertNewToDoItem(index, array[index]);
     }
 }
 
+// ------------------------------------------
 
-// Función asignada al botón
+// FUNCIÓN -> Controla la acción del botón "Enviar"
 const handleClickButton = () => {
     newToDoItem(inputBox.value);
     inputBox.value = "";
 }
 
-// Usar Enter para introducir datos
-
+// Usar Enter para activar botón
 inputBox.addEventListener("keydown", (event) => {
     if (event.key === "Enter" && isNotEditingItem) {
         // Evita el comportamiento por defecto de Enter
@@ -60,8 +45,9 @@ inputBox.addEventListener("keydown", (event) => {
 
 // -----------------------------------------
 
+// FUNCIÓN -> Creación de un nuevo item del listado
 const newToDoItem = (taskName) => {
-    // Se crea nueva entrada en el objeto
+
     if (taskName === "") {
         alert("Por favor, inserte una tarea");
         return;
@@ -70,25 +56,24 @@ const newToDoItem = (taskName) => {
         task: taskName,
         complete: false,
     }
-    // Se introduce el item en el array
+
+    // Se actualiza el array
     toDoList.push(item);
     // Se introduce en el localStorage
-    saveItemToLocalStorage((toDoList.length - 1), item);
-    // Se crea un nuevo nodo
-    insertNewToDoItem(toDoList);
+    updateLocalStorage(toDoList);
+    // Se actualiza la lista
+    updateScreen(toDoList);
 }
 
 // -----------------------------------------
 
-const insertNewToDoItem = (array) => {
-    let id = array.length - 1;
+const insertNewToDoItem = (id, item) => {
     // Crea un li que tenga de id el número del objeto
     let li = document.createElement("li");
-    li.setAttribute("id", id);
-    li.classList.add("toDoItem");
-    setTimeout(() => {
-        li.classList.add("animationIn");
-    }, 0)
+    li.classList.add("toDoItem", "animationIn");
+    // setTimeout(() => {
+    //     li.classList.add("animationIn");
+    // }, 0)
 
     // Crea un checkbox con clase "checkbox"
     let checkbox = document.createElement("input");
@@ -99,32 +84,32 @@ const insertNewToDoItem = (array) => {
         if (checkbox.checked) {
             // OJO - Hay que asignar clase
             li.style.textDecoration = 'line-through';
-            toDoList[id]["complete"] = true;
+            item["complete"] = true;
+            updateLocalStorage(toDoList);
         } else {
             li.style.textDecoration = 'none';
-            toDoList[id]["complete"] = false;
+            item["complete"] = false;
+            updateLocalStorage(toDoList);
         }
     });
 
     // Crea un div con clase "task"
     let task = document.createElement("div");
-    task.setAttribute("id", `task-${id}`);
     task.classList.add("task");
-    task.innerText = toDoList[id].task;
+    task.innerText = item["task"];
 
     // Crea un botón con clase "editItemBtn"
     let editBtn = document.createElement("button");
     editBtn.classList.add("editBtn");
     editBtn.innerText = "Editar";
     editBtn.addEventListener("click", () => {
-        let currentId = li.id;
         // Enter ahora no introduce valor, sino que acepta la edición
         isNotEditingItem = false;
 
         // Se crea el campo de texto
         let editableTask = document.createElement("input");
         editableTask.setAttribute("type", "text");
-        editableTask.setAttribute("placeholder", toDoList[currentId]["task"]);
+        editableTask.setAttribute("placeholder", item["task"]);
         editableTask.classList.add("editable-task");
 
         // Se crea el botón Aceptar
@@ -133,11 +118,12 @@ const insertNewToDoItem = (array) => {
         editBtnOK.innerText = "Aceptar";
         editBtnOK.addEventListener("click", () => {
             if (editableTask.value === "") {
-                toDoList[currentId]["task"] = toDoList[currentId]["task"];
+                item["task"] = item["task"];
             } else {
-                toDoList[currentId]["task"] = editableTask.value;
+                item["task"] = editableTask.value;
+                updateLocalStorage(toDoList);
             }
-            task.innerText = toDoList[currentId]["task"];
+            task.innerText = item["task"];
             editableTask.parentNode.replaceChild(task, editableTask);
             editBtnOK.parentNode.replaceChild(editBtn, editBtnOK);
             editBtnCancel.parentNode.replaceChild(deleteBtn, editBtnCancel);
@@ -191,13 +177,11 @@ const insertNewToDoItem = (array) => {
 
     deleteBtn.addEventListener("click", () => {
         if (confirm("¿Seguro que deseas borrarlo?")) {
-            let currentId = li.id;
-            toDoList.splice(currentId, 1);
+            toDoList.splice(id, 1);
+            updateLocalStorage(toDoList);
             li.classList.add("animationOut")
             setTimeout(() => {
-                li.parentNode.removeChild(li);
-                // Se resetean las id de los li
-                resetIds();
+                updateScreen(toDoList);
             }, 1000)
 
         }
@@ -208,8 +192,7 @@ const insertNewToDoItem = (array) => {
     upBtn.classList.add("upBtn");
     upBtn.innerText = "▲";
     upBtn.addEventListener("click", () => {
-        let index = +upBtn.parentNode.parentNode.id;
-        moveItemList(index, DIRECTIONS.UP, toDoList);
+        moveItemList(toDoList.indexOf(item), DIRECTIONS.UP, toDoList);
     });
 
     // Se crea un botón de bajada
@@ -217,8 +200,7 @@ const insertNewToDoItem = (array) => {
     downBtn.classList.add("downBtn");
     downBtn.innerText = "▼";
     downBtn.addEventListener("click", () => {
-        let index = +downBtn.parentNode.parentNode.id;
-        moveItemList(index, DIRECTIONS.DOWN, toDoList);
+        moveItemList(toDoList.indexOf(item), DIRECTIONS.DOWN, toDoList);
     });
 
     // Se meten en un mismo div
@@ -242,7 +224,8 @@ function moveItemList(index, direction, array) {
             return;
         }
         swapElementsArray(array, index - 1, index);
-        moveUpDOM(index);
+        updateLocalStorage(toDoList);
+        updateScreen(array);
     }
 
     if (direction === DIRECTIONS.DOWN) {
@@ -250,7 +233,8 @@ function moveItemList(index, direction, array) {
             return;
         }
         swapElementsArray(array, index, index + 1);
-        moveDownDOM(index);
+        updateLocalStorage(toDoList);
+        updateScreen(array);
     }
 }
 
@@ -261,37 +245,10 @@ function swapElementsArray(array, index1, index2) {
     array[index2] = temp;
 }
 
-// Desplaza los elementos del DOM hacia arriba y reemplaza los ID
-function moveUpDOM(id) {
-    let prevId = (id - 1).toString();
+// -----------------------------------------
 
-    let goUpItem = document.getElementById(id);
-    let goDownItem = document.getElementById(prevId);
-
-    goUpItem.setAttribute("id", prevId);
-    goDownItem.setAttribute("id", id);
-
-    goUpItem.after(goDownItem);
-}
-
-// Desplaza los elementos del DOM hacia abajo y reemplaza los ID
-function moveDownDOM(id) {
-    let nextId = (id + 1).toString();
-
-    let goDownItem = document.getElementById(id);
-    let goUpItem = document.getElementById(nextId);
-
-    goDownItem.setAttribute("id", nextId);
-    goUpItem.setAttribute("id", id);
-
-    goDownItem.before(goUpItem);
-}
-
-// Resetear las id de todos los items de la lista
-function resetIds() {
-    let items = list.querySelectorAll("li");
-
-    for (let i = 0; i < items.length; i++) {
-        items[i].setAttribute("id", i);
-    }
-}
+// NADA MÁS EMPEZAR...
+// Lee el localStorage y lo pasa a un array
+toDoList = (localStorage["list"] === undefined) ? [] : JSON.parse(localStorage["list"]);
+// Con ese nuevo array, pinta el listado
+updateScreen(toDoList);
