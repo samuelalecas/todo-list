@@ -1,3 +1,13 @@
+// Almacenar la información en localStorage
+function saveItemToLocalStorage(id, item) {
+    localStorage.setItem(id, JSON.stringify(item));
+}
+
+// Crear una función que añada elementos en localStorage
+
+// Crear una función que lea el localStorage y pinte la pantalla
+
+
 let toDoList = [];
 let isNotEditingItem = true;
 const inputBox = document.getElementById("inputBox");
@@ -29,10 +39,18 @@ const newToDoItem = (taskName) => {
         alert("Por favor, inserte una tarea");
         return;
     }
-    toDoList.push({
+
+    let item = {
         task: taskName,
         complete: false,
-    });
+    }
+
+    // Se introduce el item en el array
+    toDoList.push(item);
+
+    // Se introduce en el localStorage
+    saveItemToLocalStorage((toDoList.length - 1), item);
+
     // Se crea un nuevo nodo
     insertNewToDoItem(toDoList);
 }
