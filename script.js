@@ -1,18 +1,44 @@
-// Almacenar la información en localStorage
-function saveItemToLocalStorage(id, item) {
-    localStorage.setItem(id, JSON.stringify(item));
+const DIRECTIONS = {
+    UP: Symbol(),
+    DOWN: Symbol(),
 }
-
-// Crear una función que añada elementos en localStorage
-
-// Crear una función que lea el localStorage y pinte la pantalla
-
 
 let toDoList = [];
 let isNotEditingItem = true;
 const inputBox = document.getElementById("inputBox");
 const inputBoxBtn = document.getElementById("inputBoxBtn");
 const list = document.getElementById("list");
+
+// -----------------------------------------
+
+// Almacenar la información en localStorage
+function saveItemToLocalStorage(id, item) {
+    localStorage.setItem(id, JSON.stringify(item));
+}
+
+// Crear una función que elimine elementos en localStorage
+function deleteItemFromLocalStorage(id){
+    delete localStorage[id];
+}
+
+// Crear una función que lea el localStorage y pinte la pantalla
+function updateArray(array) {
+    array.length = 0;
+    let keys = Object.keys(localStorage);
+    for (let key of keys) {
+        let item = JSON.parse(localStorage[key]);
+        array.push(item);
+    }
+}
+
+// Función que actualiza la pantalla
+function updateScreen(array){
+    list.innerHTML = "";
+    for(item of array){
+
+    }
+}
+
 
 // Función asignada al botón
 const handleClickButton = () => {
@@ -21,7 +47,6 @@ const handleClickButton = () => {
 }
 
 // Usar Enter para introducir datos
-// https://www.w3schools.com/howto/howto_js_trigger_button_enter.asp
 
 inputBox.addEventListener("keydown", (event) => {
     if (event.key === "Enter" && isNotEditingItem) {
@@ -33,27 +58,27 @@ inputBox.addEventListener("keydown", (event) => {
     }
 });
 
+// -----------------------------------------
+
 const newToDoItem = (taskName) => {
     // Se crea nueva entrada en el objeto
     if (taskName === "") {
         alert("Por favor, inserte una tarea");
         return;
     }
-
     let item = {
         task: taskName,
         complete: false,
     }
-
     // Se introduce el item en el array
     toDoList.push(item);
-
     // Se introduce en el localStorage
     saveItemToLocalStorage((toDoList.length - 1), item);
-
     // Se crea un nuevo nodo
     insertNewToDoItem(toDoList);
 }
+
+// -----------------------------------------
 
 const insertNewToDoItem = (array) => {
     let id = array.length - 1;
@@ -208,10 +233,7 @@ const insertNewToDoItem = (array) => {
     list.appendChild(li);
 }
 
-const DIRECTIONS = {
-    UP: Symbol(),
-    DOWN: Symbol(),
-}
+// -----------------------------------------
 
 function moveItemList(index, direction, array) {
 
@@ -273,11 +295,3 @@ function resetIds() {
         items[i].setAttribute("id", i);
     }
 }
-
-// function swapIndexToAfter(index, array){
-//     if (index > array.length || index < 0) return array;
-//     let newArray = [...array];
-//     newArray.splice(index-1, 0, newArray[index]);
-//     newArray.splice(index+1,1);
-//     return newArray;
-// }

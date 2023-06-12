@@ -13,3 +13,9 @@ Pasos a seguir:
     - Ponerle de valor dentro el task actual
     - Seleccionar el nodo y reemplazarlo
     - Al acabar la edición, seleccionar el nodo y volverlo a hacer texto normal
+
+Incorporando localStorage:
+- ¿Cuándo se puede actualizar el array?
+    - Al añadir un item
+    - Al borrar un item
+    - Al cambiar el orden de un item
